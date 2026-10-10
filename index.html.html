@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contaminación Ambiental Local y Global - Presentación Interactiva</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Outfit', 'sans-serif'],
+          },
+          colors: {
+            eco: {
+              sky: '#0284c7',
+              water: '#0ea5e9',
+              deep: '#0f172a',
+              forest: '#16a34a',
+              leaf: '#22c55e',
+              soil: '#78350f',
+              earth: '#92400e',
+              sand: '#fef3c7',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #0369a1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #15803d;
+    }
+
+    .earth-card {
+      background: rgba(15, 23, 42, 0.78);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .slide-bg-layer {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      transition: all 0.5s ease-in-out;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .slide-dim-overlay {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(15,23,42,0.65) 0%, rgba(2,6,23,0.92) 100%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .slide-inner-content {
+      position: relative;
+      z-index: 10;
+    }
+  </style>
+</head>
+
+<body class="h-full bg-slate-950 text-slate-100 font-sans flex flex-col justify-between overflow-hidden select-none">
+
+  <!-- TOP CONTROL NAVBAR -->
+  <header class="h-16 bg-slate-900/90 border-b border-slate-800 px-4 lg:px-8 flex items-center justify-between shrink-0 z-30 backdrop-blur">
+    
+    <!-- Title & Status -->
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-600 via-emerald-600 to-amber-700 flex items-center justify-center shadow-lg text-white font-extrabold text-xl">
+        <i class="fa-solid fa-earth-americas"></i>
+      </div>
+      <div>
+        <h1 class="text-sm sm:text-base font-extrabold font-display tracking-tight text-white flex items-center gap-2">
+          Contaminación Ambiental
+          <span class="text-xs font-normal text-emerald-400 bg-emerald-950/80 border border-emerald-800/60 px-2 py-0.5 rounded-full hidden sm:inline-block">
+            Local y Global
+          </span>
+        </h1>
+        <p class="text-[11px] text-slate-400">Exposición Interactiva Educativa</p>
+      </div>
+    </div>
+
+    <!-- Controls Right -->
+    <div class="flex items-center gap-2 sm:gap-3">
+      <!-- Quick Slide Selector Dropdown -->
+      <select id="slide-selector" onchange="goToSlide(parseInt(this.value))" class="bg-slate-800 text-slate-200 text-xs font-semibold px-3 py-2 rounded-xl border border-slate-700 outline-none focus:ring-2 focus:ring-emerald-500 max-w-[140px] sm:max-w-none">
+        <option value="1">Hoja 1: Portada y Expositores</option>
+        <option value="2">Hoja 2: Introducción y Pregunta Clave</option>
+        <option value="3">Hoja 3: ¿Qué es la Contaminación?</option>
+        <option value="4">Hoja 4: Local vs. Global</option>
+        <option value="5">Hoja 5: Video Educativo y Debate</option>
+        <option value="6">Hoja 6: Preguntas y Participación</option>
+        <option value="7">Hoja 7: Consecuencias y Soluciones</option>
+        <option value="8">Hoja 8: Juego Interactivo</option>
+        <option value="9">Hoja 9: Kahoot / Quiz Evaluativo</option>
+        <option value="10">Hoja 10: Reflexión + Mini Click IA</option>
+      </select>
+
+      <!-- Botón Apartado de Fondo de Diapositiva -->
+      <button onclick="openBgModal()" title="Configurar imagen de fondo de la diapositiva" class="px-3 py-2 rounded-xl bg-sky-700/90 hover:bg-sky-600 text-white font-semibold text-xs transition flex items-center gap-1.5 shadow">
+        <i class="fa-solid fa-image text-sky-300"></i>
+        <span class="hidden sm:inline">Fondo</span>
+      </button>
+
+      <!-- Botón Modo Edición Protegido por Clave -->
+      <button onclick="openPasswordModal()" id="btn-edit-mode" class="px-3 py-2 rounded-xl bg-amber-600/90 hover:bg-amber-500 text-white font-semibold text-xs transition flex items-center gap-1.5 shadow">
+        <i class="fa-solid fa-lock" id="edit-lock-icon"></i>
+        <span id="edit-mode-label" class="hidden sm:inline">Editar</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN PRESENTATION DISPLAY AREA -->
+  <main class="flex-1 relative overflow-hidden bg-slate-950">
+    
+    <!-- SLIDE 1: PORTADA Y EXPOSITORES -->
+    <section id="slide-1" class="slide-content relative w-full h-full flex flex-col justify-center items-center p-6 lg:p-12 text-center overflow-y-auto">
+      <div id="bg-layer-1" class="slide-bg-layer opacity-40"></div>
+      <div id="dim-layer-1" class="slide-dim-overlay"></div>
+
+      <div class="slide-inner-content max-w-4xl w-full flex flex-col items-center">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 font-bold text-xs uppercase tracking-widest mb-6 shadow-lg">
+          <i class="fa-solid fa-seedling"></i> Secuencia Didáctica Escolar
+        </div>
+
+        <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black font-display text-white tracking-tight mb-4 leading-tight">
+          Contaminación Ambiental <br>
+          <span class="bg-gradient-to-r from-sky-400 via-emerald-400 to-amber-500 bg-clip-text text-transparent">
+            Local y Global
+          </span>
+        </h1>
+
+        <p class="text-slate-300 text-sm sm:text-base max-w-2xl mb-10 leading-relaxed">
+          Comprendiendo los impactos de nuestras acciones cotidianas en el ecosistema local y su repercusión en el planeta Tierra.
+        </p>
+
+        <!-- TARJETAS DE EXPOSITORES -->
+        <div class="w-full max-w-3xl grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
+          
+          <!-- Expositor 1 -->
+          <div class="earth-card p-5 rounded-2xl border-t-4 border-sky-500 shadow-xl hover:scale-105 transition-all">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-10 h-10 rounded-full bg-sky-500/20 text-sky-400 flex items-center justify-center font-bold text-lg border border-sky-500/40">
+                <i class="fa-solid fa-user-graduate"></i>
+              </div>
+              <div>
+                <span class="text-[10px] font-bold text-sky-400 uppercase tracking-wider block">Expositora 1</span>
+                <p class="text-xs text-slate-400">Definición y Tipos</p>
+              </div>
+            </div>
+            <h3 class="font-bold text-white text-base">AMBAR RODRIGUEZ</h3>
+            <p class="text-xs font-mono text-emerald-400 font-semibold mt-1">Matrícula: 23-MCTN-1-004</p>
+          </div>
+
+          <!-- Expositor 2 -->
+          <div class="earth-card p-5 rounded-2xl border-t-4 border-emerald-500 shadow-xl hover:scale-105 transition-all">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-lg border border-emerald-500/40">
+                <i class="fa-solid fa-user-graduate"></i>
+              </div>
+              <div>
+                <span class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider block">Expositora 2</span>
+                <p class="text-xs text-slate-400">Escala Local y Global</p>
+              </div>
+            </div>
+            <h3 class="font-bold text-white text-base">SHAINA OVALLE</h3>
+            <p class="text-xs text-slate-400 mt-1">Presentadora de Ecosistemas</p>
+          </div>
+
+          <!-- Expositor 3 -->
+          <div class="earth-card p-5 rounded-2xl border-t-4 border-amber-600 shadow-xl hover:scale-105 transition-all">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-10 h-10 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-lg border border-amber-500/40">
+                <i class="fa-solid fa-user-graduate"></i>
+              </div>
+              <div>
+                <span class="text-[10px] font-bold text-amber-400 uppercase tracking-wider block">Expositora 3</span>
+                <p class="text-xs text-slate-400">Efectos y Soluciones</p>
+              </div>
+            </div>
+            <h3 class="font-bold text-white text-base">YOSENDY BATISTA</h3>
+            <p class="text-xs text-slate-400 mt-1">Líder de Compromiso Verde</p>
+          </div>
+
+        </div>
+
+        <button onclick="nextSlide()" class="mt-10 px-8 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-sky-600 hover:from-emerald-500 hover:to-sky-500 text-white font-bold text-sm tracking-wide shadow-lg shadow-emerald-900/40 transition flex items-center gap-3">
+          <span>Iniciar Presentación</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+    </section>
+
+    <!-- SLIDE 2: INTRODUCCIÓN Y PREGUNTA CLAVE -->
+    <section id="slide-2" class="slide-content hidden relative w-full h-full flex-col justify-center p-6 lg:p-12 overflow-y-auto">
+      <div id="bg-layer-2" class="slide-bg-layer opacity-30"></div>
+      <div id="dim-layer-2" class="slide-dim-overlay"></div>
+
+      <div class="slide-inner-content max-w-4xl mx-auto w-full">
+        <span class="text-xs font-bold uppercase tracking-widest text-sky-400 bg-sky-950/80 px-3 py-1 rounded-full border border-sky-800">
+          Hoja 2 · Introducción al Tema
+        </span>
+        <h2 class="text-2xl sm:text-4xl font-extrabold font-display text-white mt-3 mb-6">
+          ¿Por qué es fundamental cuidar nuestro entorno?
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="earth-card p-6 rounded-2xl border-l-4 border-sky-500">
+            <h3 class="text-lg font-bold text-sky-300 mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-bullhorn"></i> Introducción General
+            </h3>
+            <p class="text-slate-300 text-sm leading-relaxed">
+              El medioambiente no es solo la naturaleza distante; es el aire que respiramos en el aula, el agua que bebemos diariamente y la tierra que sostiene nuestras comunidades.
+            </p>
+          </div>
+
+          <div class="earth-card p-6 rounded-2xl border-l-4 border-amber-600 bg-amber-950/20">
+            <h3 class="text-lg font-bold text-amber-400 mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-comments"></i> Pregunta Clave de Inicio
+            </h3>
+            <p class="text-slate-200 text-base font-semibold italic mb-3">
+              “¿Qué problemas de contaminación observamos en nuestra comunidad todos los días?”
+            </p>
+            <p class="text-xs text-slate-400">
+              Invitamos a los estudiantes a reflexionar sobre la basura en las calles, el humo de autos o la suciedad en ríos cercanos.
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-8 p-6 rounded-2xl bg-emerald-950/40 border border-emerald-500/30 flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-2xl shrink-0">
+            <i class="fa-solid fa-hand-holding-heart"></i>
+          </div>
+          <div>
+            <h4 class="font-bold text-emerald-300 text-sm">Objetivo de la Sesión</h4>
+            <p class="text-xs text-slate-300">
+              Comprender la relación directa entre las conductas locales individuales y los grandes desafíos ecológicos globales.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: ¿QUÉ ES LA CONTAMINACIÓN? (INTEGRANTE 1) -->
+    <section id="slide-3" class="slide-content hidden relative w-full h-full flex-col p-6 lg:p-10 overflow-y-auto">
+      <div id="bg-layer-3" class="slide-bg-layer opacity-30"></div>
+      <div id="dim-layer-3" class="slide-dim-overlay"></div>
+
+      <div class="slide-inner-content max-w-5xl mx-auto w-full">
+        <div class="flex items-center justify-between mb-4">
+          <span class="text-xs font-bold uppercase tracking-widest text-emerald-400 bg-emerald-950/80 px-3 py-1 rounded-full border border-emerald-800">
+            Hoja 3 · Expositora: AMBAR RODRIGUEZ
+          </span>
+          <span class="text-xs text-slate-400 font-mono">23-MCTN-1-004</span>
+        </div>
+
+        <h2 class="text-2xl sm:text-4xl font-extrabold font-display text-white mb-6">
+          ¿Qué es la Contaminación Ambiental?
+        </h2>
+
+        <div class="earth-card p-6 rounded-2xl mb-8 border-l-4 border-emerald-500">
+          <p class="text-slate-200 text-sm sm:text-base leading-relaxed">
+            Es la presencia o introducción en el medio ambiente de sustancias o elementos nocivos (físicos, químicos o biológicos) que alteran desfavorablemente las condiciones naturales y perjudican la salud humana y la biodiversidad.
+          </p>
+        </div>
+
+        <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-cubes text-emerald-400"></i> Los 3 Tipos Principales de Contaminación
+        </h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <!-- Aire -->
+          <div class="earth-card p-5 rounded-2xl border-t-4 border-sky-400 hover:border-sky-300 transition">
+            <div class="w-10 h-10 rounded-xl bg-sky-500/20 text-sky-300 flex items-center justify-center text-xl mb-3">
+              <i class="fa-solid fa-wind"></i>
+            </div>
+            <h4 class="font-bold text-sky-300 text-base mb-1">Contaminación del Aire</h4>
+            <p class="text-xs text-slate-300 leading-relaxed mb-3">
+              Gases tóxicos, monóxido de carbono y humo proveniente de autos, fábricas y quema de residuos.
+            </p>
+            <span class="text-[11px] font-semibold text-slate-400 block bg-slate-800/80 p-2 rounded-lg">
+              Ejemplo: Smog urbano en horas pico.
+            </span>
+          </div>
+
+          <!-- Agua -->
+          <div class="earth-card p-5 rounded-2xl border-t-4 border-blue-500 hover:border-blue-400 transition">
+            <div class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-300 flex items-center justify-center text-xl mb-3">
+              <i class="fa-solid fa-water"></i>
+            </div>
+            <h4 class="font-bold text-blue-300 text-base mb-1">Contaminación del Agua</h4>
+            <p class="text-xs text-slate-300 leading-relaxed mb-3">
+              Desechos plásticos, vertidos industriales y químicos que ensucian ríos, lagos y océanos.
+            </p>
+            <span class="text-[11px] font-semibold text-slate-400 block bg-slate-800/80 p-2 rounded-lg">
+              Ejemplo: Cañada llena de envases plásticos.
+            </span>
+          </div>
+
+          <!-- Suelo -->
+          <div class="earth-card p-5 rounded-2xl border-t-4 border-amber-600 hover:border-amber-500 transition">
+            <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl mb-3">
+              <i class="fa-solid fa-mountain text-amber-500"></i>
+            </div>
+            <h4 class="font-bold text-amber-400 text-base mb-1">Contaminación del Suelo</h4>
+            <p class="text-xs text-slate-300 leading-relaxed mb-3">
+              Acumulación de basura no biodegradable, pesticidas agrícolas y fertilizantes químicos.
+            </p>
+            <span class="text-[11px] font-semibold text-slate-400 block bg-slate-800/80 p-2 rounded-lg">
+              Ejemplo: Vertederos clandestinos comunitarios.
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: LOCAL VS GLOBAL (INTEGRANTE 2) -->
+    <section id="slide-4" class="slide-content hidden relative w-full h-full flex-col p-6 lg:p-10 overflow-y-auto">
+      <div id="bg-layer-4" class="slide-bg-layer opacity-30"></div>
+      <div id="dim-layer-4" class="slide-dim-overlay"></div>
+
+      <div class="slide-inner-content max-w-5xl mx-auto w-full">
+        <span class="text-xs font-bold uppercase tracking-widest text-sky-400 bg-sky-950/80 px-3 py-1 rounded-full border border-sky-800">
+          Hoja 4 · Expositora: SHAINA OVALLE
+        </span>
+        <h2 class="text-2xl sm:text-4xl font-extrabold font-display text-white mt-3 mb-6">
+          Contaminación Local vs. Contaminación Global
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <!-- Local -->
+          <div class="earth-card p-6 rounded-2xl border-t-4 border-amber-600">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 rounded-xl bg-amber-600/20 text-amber-400 flex items-center justify-center text-xl font-bold">
+                <i class="fa-solid fa-house-chimney-crack"></i>
+              </div>
+              <h3 class="text-xl font-bold text-amber-400">Nivel Local</h3>
+            </div>
+            <p class="text-slate-300 text-xs sm:text-sm leading-relaxed mb-4">
+              Ocurre en una zona geográfica delimitada y afecta directamente a los habitantes de esa comunidad inmediata.
+            </p>
+            <ul class="space-y-2 text-xs text-slate-200">
+              <li class="flex items-center gap-2"><i class="fa-solid fa-trash text-amber-500"></i> Basura acumulada en esquinas y aceras.</li>
+              <li class="flex items-center gap-2"><i class="fa-solid fa-car-side text-amber-500"></i> Humo espeso de vehículos sin mantenimiento.</li>
+              <li class="flex items-center gap-2"><i class="fa-solid fa-faucet-drip text-amber-500"></i> Aguas residuales arrojadas a ríos locales.</li>
+            </ul>
+          </div>
+
+          <!-- Global -->
+          <div class="earth-card p-6 rounded-2xl border-t-4 border-sky-400">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 rounded-xl bg-sky-500/20 text-sky-400 flex items-center justify-center text-xl font-bold">
+                <i class="fa-solid fa-globe"></i>
+              </div>
+              <h3 class="text-xl font-bold text-sky-300">Nivel Global</h3>
+            </div>
+            <p class="text-slate-300 text-xs sm:text-sm leading-relaxed mb-4">
+              Supera fronteras nacionales y afecta la dinámica ecológica de todo el planeta Tierra.
+            </p>
+            <ul class="space-y-2 text-xs text-slate-200">
+              <li class="flex items-center gap-2"><i class="fa-solid fa-temperature-arrow-up text-sky-400"></i> Calentamiento global y efecto invernadero.</li>
+              <li class="flex items-center gap-2"><i class="fa-solid fa-cloud-showers-water text-sky-400"></i> Cambio climático y eventos extremos.</li>
+              <li class="flex items-center gap-2"><i class="fa-solid fa-fish text-sky-400"></i> Isla de plástico flotante en los océanos.</li>
+            </ul>
+          </div>
+
+        </div>
+
+        <!-- Conexión -->
+        <div class="mt-6 p-5 rounded-2xl bg-gradient-to-r from-amber-950/60 via-slate-900 to-sky-950/60 border border-slate-700 text-center">
+          <p class="text-xs sm:text-sm text-slate-200 font-semibold">
+            <i class="fa-solid fa-link text-emerald-400"></i> <strong class="text-emerald-400">¿Cómo se conectan?</strong> Cada botella arrojada a un río local llega al mar y contribuye al gran problema de la basura plástica global.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: VIDEO EDUCATIVO Y DEBATE -->
+    <section id="slide-5" class="slide-content hidden relative w-full h-full flex-col p-6 lg:p-10 overflow-y-auto">
+      <div id="bg-layer-5" class="slide-bg-layer opacity-30"></div>
+      <div id="dim-layer-5" class="slide-dim-overlay"></div>
+
+      <div class="slide-inner-content max-w-4xl mx-auto w-full">
+        <span class="text-xs font-bold uppercase tracking-widest text-emerald-400 bg-emerald-950/80 px-3 py-1 rounded-full border border-emerald-800">
+          Hoja 5 · Recurso Multimedia
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold font-display text-white mt-2 mb-4">
+          Video Educativo: ¿Qué es la Contaminación Ambiental?
+        </h2>
+
+        <!-- Reproductor de YouTube Incrustado -->
+        <div class="relative w-full aspect-video rounded-2xl overflow-hidden border-2 border-emerald-500/40 shadow-2xl mb-6 bg-slate-900">
+          <iframe 
+            class="w-full h-full"
+            src="https://www.youtube.com/embed/TV-YEQOIFuQ?rel=0" 
+            title="Video educativo sobre contaminación ambiental"
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen>
+          </iframe>
+        </div>
+
+        <div class="earth-card p-4 rounded-xl border-l-4 border-emerald-400 flex items-start gap-3">
+          <i class="fa-solid fa-circle-info text-emerald-400 text-lg mt-0.5"></i>
+          <div>
+            <h4 class="text-xs font-bold text-emerald-300 uppercase tracking-wider">Consigna previa al video:</h4>
+            <p class="text-xs text-slate-300">
+              Soliciten a los estudiantes que identifiquen al menos <strong>2 causas</strong> y <strong>2 consecuencias</strong> mostradas durante la animación para comentarlas en la siguiente sección.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: PARTICIPACIÓN ESTUDIANTIL -->
+    <section id="slide-6" class="slide-content hidden relative w-full h-full flex-col p-6 lg:p-10 overflow-y-auto">
+      <div id="bg-layer-6" class="slide-bg-layer opacity-30"></div>
+      <div id="dim-layer-6" class="slide-dim-overlay"></div>
+
+      <div class="slide-inner-content max-w-4xl mx-auto w-full">
+        <span class="text-xs font-bold uppercase tracking-widest text-sky-400 bg-sky-950/80 px-3 py-1 rounded-full border border-sky-800">
+          Hoja 6 · Dinámica Oral Participativa
+        </span>
+        <h2 class="text-2xl sm:text-4xl font-extrabold font-display text-white mt-2 mb-6">
+          Preguntas de Reflexión del Video
+        </h2>
+
+        <div class="space-y-4">
+          
+          <div class="earth-card p-5 rounded-2xl border-l-4 border-sky-400 hover:bg-slate-800/60 transition">
+            <span class="text-xs font-mono text-sky-400 font-bold block mb-1">PREGUNTA 1</span>
+            <h3 class="text-base font-bold text-white mb-2">¿Qué fue lo que más les llamó la atención del video observativo?</h3>
+            <p class="text-xs text-slate-400">Abran micrófono o espacio de respuestas libres entre los alumnos.</p>
+          </div>
+
+          <div class="earth-card p-5 rounded-2xl border-l-4 border-emerald-400 hover:bg-slate-800/60 transition">
+            <span class="text-xs font-mono text-emerald-400 font-bold block mb-1">PREGUNTA 2</span>
+            <h3 class="text-base font-bold text-white mb-2">¿Qué tipo específico de contaminación reconocieron en las escenas?</h3>
+            <div class="flex gap-2 mt-2">
+              <span class="text-[10px] px-2 py-1 rounded bg-sky-900/60 text-sky-300 font-bold border border-sky-700">Aire</span>
+              <span class="text-[10px] px-2 py-1 rounded bg-blue-900/60 text-blue-300 font-bold border border-blue-700">Agua</span>
+              <span class="text-[10px] px-2 py-1 rounded bg-amber-900/60 text-amber-300 font-bold border border-amber-700">Suelo</span>
+            </div>
+          </div>
+
+          <div class="earth-card p-5 rounded-2xl border-l-4 border-amber-500 hover:bg-slate-800/60 transition">
+            <span class="text-xs font-mono text-amber-400 font-bold block mb-1">PREGUNTA 3</span>
+            <h3 class="text-base font-bold text-white mb-2">¿Qué acciones sencillas podemos tomar desde nuestra escuela para evitar este problema?</h3>
+            <p class="text-xs text-slate-400">Ejemplo: Separar basura, no usar botellas plásticas desechables, apagar luces sobrantes.</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7: CONSECUENCIAS Y SOLUCIONES (INTEGRANTE 3) -->
+    <section id="slide-7" class="slide-content hidden relative w-full h-full flex-col p-6 lg:p-10 overflow-y-auto">
+      <div id="bg-layer-7" class="slide-bg-layer opacity-30"></div>
+      <div id="dim-layer-7" class="slide-dim-overlay"></div>
+
+      <div class="slide-inner-content max-w-5xl mx-auto w-full">
+        <span class="text-xs font-bold uppercase tracking-widest text-amber-400 bg-amber-950/80 px-3 py-1 rounded-full border border-amber-800">
+          Hoja 7 · Expositora: YOSENDY BATISTA
+        </span>
+        <h2 class="text-2xl sm:text-4xl font-extrabold font-display text-white mt-2 mb-6">
+          Consecuencias Ambientales y Soluciones Clave
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <!-- Consecuencias -->
+          <div class="earth-card p-6 rounded-2xl border-t-4 border-rose-500">
+            <h3 class="text-lg font-bold text-rose-400 mb-4 flex items-center gap-2">
+              <i class="fa-solid fa-triangle-exclamation"></i> Consecuencias Directas
+            </h3>
+            <ul class="space-y-3 text-xs text-slate-200">
+              <li class="flex items-start gap-2">
+                <i class="fa-solid fa-heart-pulse text-rose-400 mt-0.5"></i>
+                <span><strong>Enfermedades humanas:</strong> Problemas respiratorios (asma, alergias) e infecciones por agua no potable.</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <i class="fa-solid fa-skull-crossbones text-rose-400 mt-0.5"></i>
+                <span><strong>Pérdida de biodiversidad:</strong> Extinción y muerte masiva de especies terrestres y marinas.</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <i class="fa-solid fa-temperature-high text-rose-400 mt-0.5"></i>
+                <span><strong>Deterioro del clima:</strong> Olas de calor extremas y sequías severas.</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Soluciones -->
+          <div class="earth-card p-6 rounded-2xl border-t-4 border-emerald-500">
+            <h3 class="text-lg font-bold text-emerald-400 mb-4 flex items-center gap-2">
+              <i class="fa-solid fa-hand-holding-seeding text-emerald-400"></i> Soluciones al Alcance
+            </h3>
+            <ul class="space-y-3 text-xs text-slate-200">
+              <li class="flex items-start gap-2">
+                <i class="fa-solid fa-recycle text-emerald-400 mt-0.5"></i>
+                <span><strong>3R Ecológicas:</strong> Reducir plásticos de un solo uso, Reutilizar y Reciclar.</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <i class="fa-solid fa-droplet text-sky-400 mt-0.5"></i>
+                <span><strong>Ahorro de recursos:</strong> Cerrar llaves de agua y economizar energía eléctrica.</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <i class="fa-solid fa-tree text-emerald-400 mt-0.5"></i>
+                <span><strong>Reforestación:</strong> Sembrar árboles y mantener limpias las áreas verdes comunitarias.</span>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 8: JUEGO INTERACTIVO EN CLASE -->
+    <section id="slide-8" class="slide-content hidden relative w-full h-full flex-col p-6 lg:p-10 overflow-y-auto">
+      <div id="bg-layer-8" class="slide-bg-layer opacity-30"></div>
+      <div id="dim-layer-8" class="slide-dim-overlay"></div>
+
+      <div class="slide-inner-content max-w-4xl mx-auto w-full text-center">
+        <span class="text-xs font-bold uppercase tracking-widest text-emerald-400 bg-emerald-950/80 px-3 py-1 rounded-full border border-emerald-800">
+          Hoja 8 · Dinámica Interactiva
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold font-display text-white mt-2 mb-2">
+          Juego: ¿Verdadero o Falso?
+        </h2>
+        <p class="text-xs text-slate-300 mb-6">Prueben la rapidez de respuesta del curso sobre la contaminación.</p>
+
+        <!-- Container del juego -->
+        <div id="game-container" class="earth-card p-6 sm:p-8 rounded-3xl max-w-xl mx-auto border border-emerald-500/40 shadow-2xl relative">
+          <div class="text-xs font-bold text-emerald-400 font-mono mb-2" id="game-step-counter">Pregunta 1 de 3</div>
+          <h3 id="game-question" class="text-base sm:text-xl font-bold text-white mb-6 min-h-[60px] flex items-center justify-center">
+            Cargando pregunta...
+          </h3>
+
+          <div class="grid grid-cols-2 gap-4">
+            <button onclick="answerTF(true)" class="py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-base transition shadow-lg shadow-emerald-900/40 flex items-center justify-center gap-2">
+              <i class="fa-solid fa-circle-check"></i> Verdadero
+            </button>
+            <button onclick="answerTF(false)" class="py-4 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-extrabold text-base transition shadow-lg shadow-rose-900/40 flex items-center justify-center gap-2">
+              <i class="fa-solid fa-circle-xmark"></i> Falso
+            </button>
+          </div>
+
+          <div id="game-feedback" class="mt-4 text-xs font-bold min-h-[30px] flex items-center justify-center rounded-xl p-2 hidden"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 9: KAHOOT / QUIZ EVALUATIVO -->
+    <section id="slide-9" class="slide-content hidden relative w-full h-full flex-col p-6 lg:p-10 overflow-y-auto">
+      <div id="bg-layer-9" class="slide-bg-layer opacity-30"></div>
+      <div id="dim-layer-9" class="slide-dim-overlay"></div>
+
+      <div class="slide-inner-content max-w-4xl mx-auto w-full text-center">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-950/80 border border-amber-600 text-amber-300 font-bold text-xs uppercase mb-2">
+          <i class="fa-solid fa-gamepad"></i> Hoja 9 · Evaluación de Aprendizajes
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-extrabold font-display text-white mb-6">
+          Simulador de Quiz / Kahoot
+        </h2>
+
+        <div id="quiz-card" class="earth-card p-6 sm:p-8 rounded-3xl max-w-2xl mx-auto text-left border border-amber-500/40 shadow-2xl">
+          <div class="flex justify-between items-center mb-4">
+            <span class="text-xs font-bold font-mono text-amber-400" id="quiz-progress">Pregunta 1 de 3</span>
+            <span class="text-xs font-bold text-slate-400" id="quiz-score">Puntos: 0</span>
+          </div>
+
+          <h3 id="quiz-prompt" class="text-base sm:text-lg font-bold text-white mb-6">
+            Cargando pregunta del quiz...
+          </h3>
+
+          <div id="quiz-options" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+            <!-- Renderizado dinámico de opciones -->
+          </div>
+
+          <div id="quiz-result" class="text-xs font-bold p-3 rounded-xl hidden text-center"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 10: REFLEXIÓN Y MINI CLICK IA -->
+    <section id="slide-10" class="slide-content hidden relative w-full h-full flex-col p-6 lg:p-10 overflow-y-auto">
+      <div id="bg-layer-10" class="slide-bg-layer opacity-30"></div>
+      <div id="dim-layer-10" class="slide-dim-overlay"></div>
+
+      <div class="slide-inner-content max-w-5xl mx-auto w-full">
+        <span class="text-xs font-bold uppercase tracking-widest text-emerald-400 bg-emerald-950/80 px-3 py-1 rounded-full border border-emerald-800">
+          Hoja 10 · Cierre + Inteligencia Artificial
+        </span>
+        <h2 class="text-2xl sm:text-4xl font-extrabold font-display text-white mt-2 mb-4">
+          Reflexión Final & Mini Click con IA
+        </h2>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          
+          <!-- Compromiso -->
+          <div class="earth-card p-6 rounded-2xl border-l-4 border-emerald-500 flex flex-col justify-between">
+            <div>
+              <h3 class="text-lg font-bold text-emerald-300 mb-3 flex items-center gap-2">
+                <i class="fa-solid fa-leaf"></i> Mi Compromiso Ambiental
+              </h3>
+              <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                Cada estudiante mencionará una acción personal concreta. Ejemplo: “Me comprometo a no tirar servilletas ni plásticos en el patio del colegio.”
+              </p>
+            </div>
+            <div class="p-3 bg-emerald-950/50 rounded-xl border border-emerald-800/60 text-[11px] text-emerald-200">
+              <i class="fa-solid fa-quote-left mr-1"></i> El medio ambiente es nuestra casa común. Cuidarlo es cuidarnos a nosotros mismos.
+            </div>
+          </div>
+
+          <!-- MINI CLICK CON IA -->
+          <div class="earth-card p-6 rounded-2xl border-t-4 border-sky-400 relative overflow-hidden">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-lg font-bold text-sky-300 flex items-center gap-2">
+                <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> Mini Click IA Ambientalista
+              </h3>
+              <span class="text-[10px] bg-sky-900/80 text-sky-200 px-2 py-0.5 rounded font-mono">Gemini AI</span>
+            </div>
+            
+            <p class="text-xs text-slate-300 mb-4">
+              Ingresa un problema de contaminación de tu comunidad y presiona el botón para que la IA prediga sus consecuencias y genere soluciones específicas.
+            </p>
+
+            <div class="space-y-3">
+              <input type="text" id="ai-input-scenario" placeholder="Ej: Arrojar basura plástica al río local..." class="w-full bg-slate-950 text-slate-100 text-xs px-3 py-2.5 rounded-xl border border-slate-700 focus:border-sky-400 outline-none">
+              
+              <button onclick="runMiniClickAI()" id="btn-mini-click" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-sky-600 to-emerald-600 hover:from-sky-500 hover:to-emerald-500 text-white font-bold text-xs transition flex items-center justify-center gap-2 shadow">
+                <i class="fa-solid fa-bolt text-amber-300"></i>
+                <span>Generar Diagnóstico con IA</span>
+              </button>
+            </div>
+
+            <!-- Loader / Result Container -->
+            <div id="ai-output-box" class="mt-4 p-3 rounded-xl bg-slate-950/80 border border-slate-800 text-xs text-slate-300 hidden max-h-48 overflow-y-auto">
+              <!-- AI content inserted dynamically -->
+            </div>
+          </div>
+
+        </div>
+
+        <div class="text-center">
+          <p class="text-xs text-slate-400">¡Muchas gracias por su atención e interacción en esta clase ambiental!</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER NAVIGATION BAR -->
+  <footer class="h-16 bg-slate-900 border-t border-slate-800 px-4 sm:px-8 flex items-center justify-between shrink-0 z-30">
+    <button onclick="prevSlide()" id="prev-btn" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition flex items-center gap-2 disabled:opacity-40 disabled:pointer-events-none">
+      <i class="fa-solid fa-chevron-left"></i>
+      <span class="hidden sm:inline">Anterior</span>
+    </button>
+
+    <div class="text-xs font-mono font-bold text-slate-400">
+      Hoja <span id="slide-num" class="text-emerald-400">1</span> / 10
+    </div>
+
+    <button onclick="nextSlide()" id="next-btn" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition flex items-center gap-2 disabled:opacity-40 disabled:pointer-events-none shadow">
+      <span class="hidden sm:inline">Siguiente</span>
+      <i class="fa-solid fa-chevron-right"></i>
+    </button>
+  </footer>
+
+  <!-- MODAL DE APARTADO DE FONDOS DE DIAPOSITIVA (NEW BACKGROUND CUSTOMIZER) -->
+  <div id="bg-modal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="bg-slate-900 border-2 border-sky-500/50 p-6 sm:p-7 rounded-3xl max-w-2xl w-full shadow-2xl relative text-slate-100 max-h-[90vh] overflow-y-auto">
+      <button onclick="closeBgModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg w-8 h-8 flex items-center justify-center rounded-full bg-slate-800">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-11 h-11 rounded-2xl bg-sky-500/20 text-sky-400 flex items-center justify-center text-xl border border-sky-500/40 shrink-0">
+          <i class="fa-solid fa-image"></i>
+        </div>
+        <div>
+          <h3 class="text-lg font-extrabold text-white">Integrar Imagen de Fondo</h3>
+          <p class="text-xs text-slate-400">Personaliza la imagen de fondo de la diapositiva actual o de toda la presentación.</p>
+        </div>
+      </div>
+
+      <!-- PRESETS GRID -->
+      <div class="mb-5">
+        <label class="block text-xs font-bold text-sky-400 uppercase tracking-wider mb-2">
+          <i class="fa-solid fa-wand-magic"></i> Presets Temáticos de Naturaleza y Medio Ambiente:
+        </label>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5" id="bg-presets-container">
+          <!-- Preset 1 -->
+          <button onclick="applyPresetBg('https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?q=80&w=1200&auto=format&fit=crop')" class="group relative aspect-video rounded-xl overflow-hidden border border-slate-700 hover:border-sky-400 focus:ring-2 focus:ring-sky-400 transition">
+            <img src="https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-110 transition duration-300" alt="Contaminación Plástica">
+            <span class="absolute inset-0 bg-slate-950/40 group-hover:bg-transparent transition flex items-end p-1.5 text-[10px] font-bold text-white leading-tight">Plásticos / Océano</span>
+          </button>
+          <!-- Preset 2 -->
+          <button onclick="applyPresetBg('https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=1200&auto=format&fit=crop')" class="group relative aspect-video rounded-xl overflow-hidden border border-slate-700 hover:border-sky-400 focus:ring-2 focus:ring-sky-400 transition">
+            <img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-110 transition duration-300" alt="Bosque Verde">
+            <span class="absolute inset-0 bg-slate-950/40 group-hover:bg-transparent transition flex items-end p-1.5 text-[10px] font-bold text-white leading-tight">Bosque Verde</span>
+          </button>
+          <!-- Preset 3 -->
+          <button onclick="applyPresetBg('https://images.unsplash.com/photo-1618022325802-7e5e732d97a1?q=80&w=1200&auto=format&fit=crop')" class="group relative aspect-video rounded-xl overflow-hidden border border-slate-700 hover:border-sky-400 focus:ring-2 focus:ring-sky-400 transition">
+            <img src="https://images.unsplash.com/photo-1618022325802-7e5e732d97a1?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-110 transition duration-300" alt="Humo e Industria">
+            <span class="absolute inset-0 bg-slate-950/40 group-hover:bg-transparent transition flex items-end p-1.5 text-[10px] font-bold text-white leading-tight">Industria / Smog</span>
+          </button>
+          <!-- Preset 4 -->
+          <button onclick="applyPresetBg('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1200&auto=format&fit=crop')" class="group relative aspect-video rounded-xl overflow-hidden border border-slate-700 hover:border-sky-400 focus:ring-2 focus:ring-sky-400 transition">
+            <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-110 transition duration-300" alt="Planeta Tierra">
+            <span class="absolute inset-0 bg-slate-950/40 group-hover:bg-transparent transition flex items-end p-1.5 text-[10px] font-bold text-white leading-tight">Planeta Global</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- CUSTOM URL OR FILE UPLOAD -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1.5">
+            <i class="fa-solid fa-link text-sky-400"></i> Pegar enlace de imagen (URL):
+          </label>
+          <input type="url" id="bg-url-input" placeholder="https://ejemplo.com/imagen.jpg" class="w-full bg-slate-950 text-xs px-3 py-2.5 rounded-xl border border-slate-700 focus:border-sky-400 outline-none text-slate-100">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1.5">
+            <i class="fa-solid fa-upload text-emerald-400"></i> O subir desde tu equipo:
+          </label>
+          <input type="file" id="bg-file-input" accept="image/*" onchange="handleBgFileUpload(event)" class="w-full bg-slate-950 text-xs px-3 py-2 rounded-xl border border-slate-700 focus:border-emerald-400 outline-none text-slate-400 file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:bg-emerald-950 file:text-emerald-300 file:font-bold file:text-xs">
+        </div>
+      </div>
+
+      <!-- SLIDERS: OPACITY & BLUR -->
+      <div class="bg-slate-950/60 p-4 rounded-2xl border border-slate-800 mb-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <div class="flex justify-between text-xs font-bold mb-1">
+            <span class="text-slate-300">Opacidad del Fondo:</span>
+            <span id="bg-opacity-val" class="text-sky-400 font-mono">35%</span>
+          </div>
+          <input type="range" id="bg-opacity-range" min="5" max="90" value="35" oninput="updateBgOpacityPreview(this.value)" class="w-full accent-sky-500 cursor-pointer">
+        </div>
+
+        <div>
+          <div class="flex justify-between text-xs font-bold mb-1">
+            <span class="text-slate-300">Desenfoque (Blur):</span>
+            <span id="bg-blur-val" class="text-emerald-400 font-mono">0px</span>
+          </div>
+          <input type="range" id="bg-blur-range" min="0" max="12" value="0" oninput="updateBgBlurPreview(this.value)" class="w-full accent-emerald-500 cursor-pointer">
+        </div>
+      </div>
+
+      <!-- ACTION BUTTONS -->
+      <div class="flex flex-wrap gap-2 pt-2">
+        <button onclick="applyBgToCurrent()" class="flex-1 min-w-[130px] py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs transition flex items-center justify-center gap-1.5 shadow">
+          <i class="fa-solid fa-check"></i>
+          <span>Esta Hoja (<span id="modal-curr-slide-num">1</span>)</span>
+        </button>
+
+        <button onclick="applyBgToAll()" class="flex-1 min-w-[130px] py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition flex items-center justify-center gap-1.5 shadow">
+          <i class="fa-solid fa-layer-group"></i>
+          <span>Todas las Hojas</span>
+        </button>
+
+        <button onclick="removeSlideBg()" class="py-2.5 px-4 rounded-xl bg-rose-900/60 hover:bg-rose-800 text-rose-200 font-bold text-xs transition border border-rose-700/50 flex items-center gap-1.5">
+          <i class="fa-solid fa-trash-can"></i>
+          <span>Quitar</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE CONTRASEÑA PARA MODO EDICIÓN (PIN: 1221) -->
+  <div id="password-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="bg-slate-900 border-2 border-amber-500/50 p-6 sm:p-8 rounded-2xl max-w-md w-full shadow-2xl relative text-slate-100">
+      <button onclick="closePasswordModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="w-12 h-12 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-2xl mx-auto mb-4 border border-amber-500/40">
+        <i class="fa-solid fa-key"></i>
+      </div>
+
+      <h3 class="text-xl font-extrabold text-center text-white mb-2">Acceso a Modo Edición</h3>
+      <p class="text-xs text-slate-300 text-center mb-6 leading-relaxed">
+        Ingresa la clave de seguridad de 4 dígitos para editar los textos e informaciones de las diapositivas.
+      </p>
+
+      <form onsubmit="event.preventDefault(); verifyPassword();" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-amber-400 mb-1">Clave de Seguridad:</label>
+          <input type="password" id="editor-pin-input" placeholder="••••" maxlength="8" class="w-full bg-slate-950 text-white text-center text-xl tracking-widest font-mono py-3 px-4 rounded-xl border border-slate-700 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/30 outline-none">
+        </div>
+
+        <div id="pin-error-msg" class="text-xs text-rose-400 text-center hidden font-bold bg-rose-950/60 p-2 rounded-lg border border-rose-800/50">
+          <i class="fa-solid fa-triangle-exclamation"></i> Clave incorrecta. Inténtalo de nuevo.
+        </div>
+
+        <div class="flex gap-2 pt-2">
+          <button type="button" onclick="closePasswordModal()" class="flex-1 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs transition">
+            Cancelar
+          </button>
+          <button type="submit" class="flex-1 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs transition flex items-center justify-center gap-2 shadow-lg shadow-amber-900/40">
+            <i class="fa-solid fa-unlock"></i>
+            <span>Desbloquear</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- FLOATING EDITING BANNER -->
+  <div id="editor-banner" class="fixed bottom-20 left-1/2 -translate-x-1/2 z-40 bg-amber-950/90 border-2 border-amber-500/80 backdrop-blur-md text-amber-100 px-5 py-3 rounded-2xl shadow-2xl hidden items-center justify-between gap-4 max-w-xl w-[90%]">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 rounded-lg bg-amber-500 text-slate-950 flex items-center justify-center font-bold shrink-0">
+        <i class="fa-solid fa-pen-to-square"></i>
+      </div>
+      <div>
+        <p class="text-xs font-bold text-white">Modo Edición Activado</p>
+        <p class="text-[11px] text-amber-200">Haz clic sobre cualquier texto para modificarlo en tiempo real.</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 shrink-0">
+      <button onclick="saveEdits()" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition flex items-center gap-1 shadow">
+        <i class="fa-solid fa-floppy-disk"></i> Guardar
+      </button>
+      <button onclick="disableEditMode()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition">
+        <i class="fa-solid fa-lock"></i> Bloquear
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // State management
+    let currentSlide = 1;
+    const totalSlides = 10;
+    let isEditModeActive = false;
+
+    // Background images per slide data structure
+    let slideBgConfigs = {
+      // default presets or saved images
+      1: { url: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1200&auto=format&fit=crop', opacity: 35, blur: 0 },
+      2: { url: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=1200&auto=format&fit=crop', opacity: 30, blur: 0 },
+      3: { url: 'https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?q=80&w=1200&auto=format&fit=crop', opacity: 30, blur: 0 },
+      4: { url: 'https://images.unsplash.com/photo-1618022325802-7e5e732d97a1?q=80&w=1200&auto=format&fit=crop', opacity: 30, blur: 0 },
+      5: { url: 'https://images.unsplash.com/photo-1518173946687-a4c8a383392e?q=80&w=1200&auto=format&fit=crop', opacity: 25, blur: 0 }
+    };
+
+    // SLIDE NAVIGATION LOGIC
+    function goToSlide(slideIndex) {
+      if (slideIndex < 1 || slideIndex > totalSlides) return;
+      currentSlide = slideIndex;
+      updateSlideVisibility();
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        updateSlideVisibility();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        updateSlideVisibility();
+      }
+    }
+
+    function updateSlideVisibility() {
+      for (let i = 1; i <= totalSlides; i++) {
+        const slide = document.getElementById(`slide-${i}`);
+        if (slide) {
+          if (i === currentSlide) {
+            slide.classList.remove('hidden');
+            slide.classList.add('flex');
+          } else {
+            slide.classList.add('hidden');
+            slide.classList.remove('flex');
+          }
+        }
+      }
+      document.getElementById('slide-num').innerText = currentSlide;
+      document.getElementById('slide-selector').value = currentSlide;
+      document.getElementById('prev-btn').disabled = (currentSlide === 1);
+      document.getElementById('next-btn').disabled = (currentSlide === totalSlides);
+      
+      // Update background presentation
+      renderSlideBackgrounds();
+    }
+
+    // BACKGROUND IMAGE CUSTOMIZER LOGIC
+    function openBgModal() {
+      document.getElementById('modal-curr-slide-num').innerText = currentSlide;
+      
+      const config = slideBgConfigs[currentSlide] || { url: '', opacity: 35, blur: 0 };
+      document.getElementById('bg-url-input').value = config.url || '';
+      document.getElementById('bg-opacity-range').value = config.opacity || 35;
+      document.getElementById('bg-opacity-val').innerText = (config.opacity || 35) + '%';
+      document.getElementById('bg-blur-range').value = config.blur || 0;
+      document.getElementById('bg-blur-val').innerText = (config.blur || 0) + 'px';
+
+      const modal = document.getElementById('bg-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeBgModal() {
+      const modal = document.getElementById('bg-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function applyPresetBg(url) {
+      document.getElementById('bg-url-input').value = url;
+    }
+
+    function handleBgFileUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('bg-url-input').value = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function updateBgOpacityPreview(val) {
+      document.getElementById('bg-opacity-val').innerText = val + '%';
+    }
+
+    function updateBgBlurPreview(val) {
+      document.getElementById('bg-blur-val').innerText = val + 'px';
+    }
+
+    function applyBgToCurrent() {
+      const url = document.getElementById('bg-url-input').value.trim();
+      const opacity = parseInt(document.getElementById('bg-opacity-range').value);
+      const blur = parseInt(document.getElementById('bg-blur-range').value);
+
+      slideBgConfigs[currentSlide] = { url, opacity, blur };
+      saveBgConfigs();
+      renderSlideBackgrounds();
+      closeBgModal();
+    }
+
+    function applyBgToAll() {
+      const url = document.getElementById('bg-url-input').value.trim();
+      const opacity = parseInt(document.getElementById('bg-opacity-range').value);
+      const blur = parseInt(document.getElementById('bg-blur-range').value);
+
+      for (let i = 1; i <= totalSlides; i++) {
+        slideBgConfigs[i] = { url, opacity, blur };
+      }
+      saveBgConfigs();
+      renderSlideBackgrounds();
+      closeBgModal();
+    }
+
+    function removeSlideBg() {
+      delete slideBgConfigs[currentSlide];
+      document.getElementById('bg-url-input').value = '';
+      saveBgConfigs();
+      renderSlideBackgrounds();
+      closeBgModal();
+    }
+
+    function renderSlideBackgrounds() {
+      for (let i = 1; i <= totalSlides; i++) {
+        const bgLayer = document.getElementById(`bg-layer-${i}`);
+        if (!bgLayer) continue;
+
+        const config = slideBgConfigs[i];
+        if (config && config.url) {
+          bgLayer.style.backgroundImage = `url("${config.url}")`;
+          bgLayer.style.opacity = (config.opacity / 100);
+          bgLayer.style.filter = `blur(${config.blur}px)`;
+        } else {
+          bgLayer.style.backgroundImage = 'none';
+        }
+      }
+    }
+
+    function saveBgConfigs() {
+      try {
+        localStorage.setItem('presentation_bg_configs_v1', JSON.stringify(slideBgConfigs));
+      } catch(e) {
+        console.warn('Storage limit reached for local background image files');
+      }
+    }
+
+    function loadBgConfigs() {
+      try {
+        const saved = localStorage.getItem('presentation_bg_configs_v1');
+        if (saved) {
+          slideBgConfigs = JSON.parse(saved);
+        }
+      } catch(e) {}
+    }
+
+    // PASSWORD PROTECTED EDIT MODE (PIN: 1221)
+    function openPasswordModal() {
+      if (isEditModeActive) {
+        disableEditMode();
+        return;
+      }
+      document.getElementById('editor-pin-input').value = '';
+      document.getElementById('pin-error-msg').classList.add('hidden');
+      const modal = document.getElementById('password-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      setTimeout(() => document.getElementById('editor-pin-input').focus(), 100);
+    }
+
+    function closePasswordModal() {
+      const modal = document.getElementById('password-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function verifyPassword() {
+      const input = document.getElementById('editor-pin-input').value.trim();
+      if (input === '1221') {
+        closePasswordModal();
+        enableEditMode();
+      } else {
+        document.getElementById('pin-error-msg').classList.remove('hidden');
+        document.getElementById('editor-pin-input').value = '';
+        document.getElementById('editor-pin-input').focus();
+      }
+    }
+
+    function enableEditMode() {
+      isEditModeActive = true;
+      const btn = document.getElementById('btn-edit-mode');
+      btn.classList.replace('bg-amber-600/90', 'bg-emerald-600');
+      btn.classList.replace('hover:bg-amber-500', 'hover:bg-emerald-500');
+      document.getElementById('edit-lock-icon').className = 'fa-solid fa-lock-open';
+      document.getElementById('edit-mode-label').innerText = 'Editando';
+
+      const editableTargets = document.querySelectorAll('main h1, main h2, main h3, main h4, main p, main span, main li');
+      editableTargets.forEach(el => {
+        el.setAttribute('contenteditable', 'true');
+        el.classList.add('focus:outline-none', 'focus:ring-2', 'focus:ring-amber-400/60', 'focus:bg-amber-500/10', 'rounded', 'transition-all');
+      });
+
+      const banner = document.getElementById('editor-banner');
+      banner.classList.remove('hidden');
+      banner.classList.add('flex');
+    }
+
+    function disableEditMode() {
+      isEditModeActive = false;
+      const btn = document.getElementById('btn-edit-mode');
+      btn.classList.replace('bg-emerald-600', 'bg-amber-600/90');
+      btn.classList.replace('hover:bg-emerald-500', 'hover:bg-amber-500');
+      document.getElementById('edit-lock-icon').className = 'fa-solid fa-lock';
+      document.getElementById('edit-mode-label').innerText = 'Editar';
+
+      const editableTargets = document.querySelectorAll('main [contenteditable="true"]');
+      editableTargets.forEach(el => {
+        el.removeAttribute('contenteditable');
+        el.classList.remove('focus:outline-none', 'focus:ring-2', 'focus:ring-amber-400/60', 'focus:bg-amber-500/10');
+      });
+
+      const banner = document.getElementById('editor-banner');
+      banner.classList.add('hidden');
+      banner.classList.remove('flex');
+    }
+
+    function saveEdits() {
+      const mainContent = document.querySelector('main').innerHTML;
+      localStorage.setItem('presentation_edited_content_v3', mainContent);
+
+      const bannerText = document.querySelector('#editor-banner p.text-xs');
+      const originalText = bannerText.innerText;
+      bannerText.innerText = '¡Cambios guardados con éxito!';
+      setTimeout(() => { bannerText.innerText = originalText; }, 2500);
+    }
+
+    function loadSavedEdits() {
+      const saved = localStorage.getItem('presentation_edited_content_v3');
+      if (saved) {
+        document.querySelector('main').innerHTML = saved;
+      }
+    }
+
+    // GAME 1: VERDADERO O FALSO
+    const tfQuestions = [
+      { q: "El humo emitido por los vehículos solo afecta el aire local y no contribuye al cambio climático global.", a: false, exp: "¡Falso! El CO2 emitido sube a la atmósfera y aumenta el efecto invernadero global." },
+      { q: "Separar la basura en orgánica e inorgánica reduce la contaminación del suelo.", a: true, exp: "¡Correcto! Permite reciclar materiales y evita que se acumulen en vertederos." },
+      { q: "Tirar una botella de plástico al río de la ciudad no tiene consecuencias en los océanos.", a: false, exp: "¡Falso! La mayoría de los ríos desembocan en el mar transportando los plásticos." }
+    ];
+    let tfIndex = 0;
+
+    function renderTFQuestion() {
+      if (tfIndex >= tfQuestions.length) tfIndex = 0;
+      document.getElementById('game-step-counter').innerText = `Pregunta ${tfIndex + 1} de ${tfQuestions.length}`;
+      document.getElementById('game-question').innerText = tfQuestions[tfIndex].q;
+      const feedback = document.getElementById('game-feedback');
+      feedback.classList.add('hidden');
+    }
+
+    function answerTF(userChoice) {
+      const current = tfQuestions[tfIndex];
+      const feedback = document.getElementById('game-feedback');
+      feedback.classList.remove('hidden', 'bg-emerald-950/80', 'text-emerald-300', 'bg-rose-950/80', 'text-rose-300');
+
+      if (userChoice === current.a) {
+        feedback.classList.add('bg-emerald-950/80', 'text-emerald-300', 'border', 'border-emerald-600');
+        feedback.innerHTML = `<i class="fa-solid fa-circle-check mr-2"></i> ${current.exp}`;
+      } else {
+        feedback.classList.add('bg-rose-950/80', 'text-rose-300', 'border', 'border-rose-600');
+        feedback.innerHTML = `<i class="fa-solid fa-circle-xmark mr-2"></i> Incumplido. ${current.exp}`;
+      }
+
+      setTimeout(() => {
+        tfIndex++;
+        renderTFQuestion();
+      }, 3500);
+    }
+
+    // GAME 2: QUIZ SIMULATOR (KAHOOT)
+    const quizData = [
+      {
+        q: "¿Cuál de las siguientes es una consecuencia directa de la contaminación del agua?",
+        options: ["Aumento de bosques", "Muerte de fauna marina", "Mejor aire respirable", "Generación de energía limpia"],
+        correct: 1
+      },
+      {
+        q: "¿Qué representa la regla de las 3R ecológicas?",
+        options: ["Romper, Regalar, Repetir", "Reducir, Reutilizar, Reciclar", "Reforestar, Rociar, Reparar", "Rápido, Recreativo, Regular"],
+        correct: 1
+      },
+      {
+        q: "¿Cuál es un ejemplo claro de contaminación ambiental LOCAL?",
+        options: ["Calentamiento global", "Basura acumulada en la cañada del barrio", "Derretimiento de los polos", "Efecto invernadero"],
+        correct: 1
+      }
+    ];
+    let quizIndex = 0;
+    let quizPoints = 0;
+
+    function renderQuizQuestion() {
+      if (quizIndex >= quizData.length) {
+        document.getElementById('quiz-prompt').innerText = `¡Quiz Completado! Obtuviste ${quizPoints} de ${quizData.length * 100} puntos posibles.`;
+        document.getElementById('quiz-options').innerHTML = `
+          <button onclick="resetQuiz()" class="col-span-full py-3 bg-amber-600 text-white rounded-xl font-bold text-xs hover:bg-amber-500 transition shadow">
+            Reiniciar Quiz
+          </button>
+        `;
+        document.getElementById('quiz-result').classList.add('hidden');
+        return;
+      }
+
+      const q = quizData[quizIndex];
+      document.getElementById('quiz-progress').innerText = `Pregunta ${quizIndex + 1} de ${quizData.length}`;
+      document.getElementById('quiz-score').innerText = `Puntos: ${quizPoints}`;
+      document.getElementById('quiz-prompt').innerText = q.q;
+
+      const optsContainer = document.getElementById('quiz-options');
+      optsContainer.innerHTML = '';
+
+      const colors = [
+        'from-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600',
+        'from-sky-600 to-sky-700 hover:from-sky-500 hover:to-sky-600',
+        'from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600',
+        'from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600'
+      ];
+
+      q.options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = `p-4 rounded-xl bg-gradient-to-r ${colors[idx % colors.length]} text-white font-bold text-xs text-left shadow-lg transition flex items-center justify-between`;
+        btn.innerHTML = `<span>${opt}</span> <i class="fa-solid fa-chevron-right text-xs opacity-70"></i>`;
+        btn.onclick = () => selectQuizOption(idx);
+        optsContainer.appendChild(btn);
+      });
+
+      document.getElementById('quiz-result').classList.add('hidden');
+    }
+
+    function selectQuizOption(idx) {
+      const q = quizData[quizIndex];
+      const res = document.getElementById('quiz-result');
+      res.classList.remove('hidden', 'bg-emerald-950/90', 'text-emerald-300', 'bg-rose-950/90', 'text-rose-300');
+
+      if (idx === q.correct) {
+        quizPoints += 100;
+        res.classList.add('bg-emerald-950/90', 'text-emerald-300', 'border', 'border-emerald-600');
+        res.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> ¡Respuesta Correcta! (+100 Pts)`;
+      } else {
+        res.classList.add('bg-rose-950/90', 'text-rose-300', 'border', 'border-rose-600');
+        res.innerHTML = `<i class="fa-solid fa-circle-xmark mr-1"></i> Incorrecto. La opción correcta era: "${q.options[q.correct]}"`;
+      }
+
+      setTimeout(() => {
+        quizIndex++;
+        renderQuizQuestion();
+      }, 2500);
+    }
+
+    function resetQuiz() {
+      quizIndex = 0;
+      quizPoints = 0;
+      renderQuizQuestion();
+    }
+
+    // MINI CLICK CON IA (GEMINI API)
+    async function runMiniClickAI() {
+      const input = document.getElementById('ai-input-scenario').value.trim();
+      const outputBox = document.getElementById('ai-output-box');
+      const btn = document.getElementById('btn-mini-click');
+
+      if (!input) {
+        outputBox.classList.remove('hidden');
+        outputBox.innerHTML = '<span class="text-rose-400 font-bold"><i class="fa-solid fa-circle-exclamation mr-1"></i> Por favor escribe una problemática local. Ej: "Vertido de plásticos en la playa local".</span>';
+        return;
+      }
+
+      outputBox.classList.remove('hidden');
+      outputBox.innerHTML = `
+        <div class="flex items-center gap-2 text-sky-400 font-bold">
+          <i class="fa-solid fa-spinner fa-spin"></i>
+          <span>Analizando escenario ambiental con IA Gemini...</span>
+        </div>
+      `;
+      btn.disabled = true;
+
+      const systemPrompt = "Eres un Asistente Ecologista y Ambientalista Educativo. Responde de forma muy concisa, estructurada y pedagógica en máximo 3 oraciones cortas: 1) Impacto local inmediato, 2) Impacto global derivado, y 3) Una solución ecológica práctica.";
+      const userQuery = `Analiza la siguiente problemática ambiental comunitaria y provee diagnóstico y solución: "${input}"`;
+
+      try {
+        const apiKey = ""; // Canvas runtime injection
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+        const payload = {
+          contents: [{ parts: [{ text: userQuery }] }],
+          systemInstruction: { parts: [{ text: systemPrompt }] }
+        };
+
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+        const responseText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+        if (responseText) {
+          outputBox.innerHTML = `
+            <div class="text-emerald-300 font-bold mb-1 flex items-center gap-1.5">
+              <i class="fa-solid fa-seedling"></i> Diagnóstico Ecológico Recomendado:
+            </div>
+            <div class="text-slate-200 leading-relaxed text-[11px] whitespace-pre-line">${responseText}</div>
+          `;
+        } else {
+          outputBox.innerHTML = '<span class="text-amber-400 font-bold"><i class="fa-solid fa-triangle-exclamation mr-1"></i> No se pudo obtener la respuesta de la IA. Por favor intenta de nuevo.</span>';
+        }
+      } catch (err) {
+        outputBox.innerHTML = '<span class="text-rose-400 font-bold"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Error al conectar con el servicio de Inteligencia Artificial.</span>';
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    // INITIALIZATION ON PAGE LOAD
+    window.onload = function() {
+      loadSavedEdits();
+      loadBgConfigs();
+      updateSlideVisibility();
+      renderTFQuestion();
+      renderQuizQuestion();
+    };
+  </script>
+</body>
+</html>
